@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 	"testing"
 )
@@ -21,26 +22,36 @@ func TestSearch(t *testing.T) {
 	SlowSearch(slowOut)
 	slowResult := slowOut.String()
 
-	fastOut := new(bytes.Buffer)
-	FastSearch(fastOut)
-	fastResult := fastOut.String()
+	//fastOut := new(bytes.Buffer)
+	//FastSearch(fastOut)
+	//fastResult := fastOut.String()
 
-	if slowResult != fastResult {
-		t.Errorf("results not match\nGot:\n%v\nExpected:\n%v", fastResult, slowResult)
+	fastPbOut := new(bytes.Buffer)
+	FastSearchProto(fastPbOut)
+	fastPbResult := fastPbOut.String()
+
+	if slowResult != fastPbResult {
+		t.Errorf("results not match\nGot:\n%v\nExpected:\n%v", fastPbResult, slowResult)
 	}
 }
 
 // -----
 // go test -bench . -benchmem
 
-func BenchmarkSlow(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		SlowSearch(ioutil.Discard)
-	}
-}
+//func BenchmarkSlow(b *testing.B) {
+//	for i := 0; i < b.N; i++ {
+//		SlowSearch(ioutil.Discard)
+//	}
+//}
 
 func BenchmarkFast(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		FastSearch(ioutil.Discard)
+		FastSearch(io.Discard)
+	}
+}
+
+func BenchmarkFastPb(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		FastSearchProto(io.Discard)
 	}
 }
